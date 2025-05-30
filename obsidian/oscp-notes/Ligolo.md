@@ -6,9 +6,8 @@ sudo ./proxy -selfcert
 interface_create --name "agent1"
 
 # 2 WAIT FOR AGENT TO CONNECT THEN...
-```
 
-```shell
+
 # 3 After Agent connects
 session
 <session_num>
@@ -33,15 +32,15 @@ interface_add_route --name agent1 --route 240.0.0.1/32
 2. _**Reverse shell listener** for Box 2 to bind to our listener for access_
 3. _**Agent listener** for agent on Box 2 to reach back to our Kali_
 ```shell
-# 1. FIRST in Kali
+# 1 FIRST in Kali
 interface_create --name "agent2"
 
-# 2. THEN for AGENT 1 in BOX 1
+# 2 THEN for AGENT 1 in BOX 1
 listener_add --addr 0.0.0.0:8080 --to 127.0.0.1:ANY_OPEN_PORT # http
 listener_add --addr 0.0.0.0:4444 --to 127.0.0.1:ANY_OPEN_PORT # reverse
 listener_add --addr 0.0.0.0:11601 --to 127.0.0.1:11601 # agent
 
-# 3. RUN agent 2 from Box 2 then when agent connects:
+# 3 RUN agent 2 from Box 2 then when agent connects:
 session
 <session_num agent 2>
 tunnel_start --tun agent2

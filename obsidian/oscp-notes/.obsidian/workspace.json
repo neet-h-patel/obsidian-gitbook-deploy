@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "2 Services/ssh 22.md",
-                "mode": "source",
+                "file": "Password-Hash Cracking.md",
+                "mode": "preview",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "ssh 22"
+              "title": "Password-Hash Cracking"
             }
           }
         ]
@@ -94,6 +94,7 @@
             "state": {
               "type": "backlink",
               "state": {
+                "file": "4 Privesc/Linux-PrivEsc.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -103,7 +104,7 @@
                 "unlinkedCollapsed": true
               },
               "icon": "links-coming-in",
-              "title": "Backlinks"
+              "title": "Backlinks for Linux-PrivEsc"
             }
           },
           {
@@ -140,20 +141,21 @@
             "state": {
               "type": "outline",
               "state": {
+                "file": "Password-Hash Cracking.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline"
+              "title": "Outline of Password-Hash Cracking"
             }
           }
-        ]
+        ],
+        "currentTab": 3
       }
     ],
     "direction": "horizontal",
-    "width": 300,
-    "collapsed": true
+    "width": 300
   },
   "left-ribbon": {
     "hiddenItems": {
@@ -166,5 +168,32 @@
     }
   },
   "active": "8b42a834e6a92103",
-  "lastOpenFiles": []
+  "lastOpenFiles": [
+    "nmap.md",
+    "5985,5986 winrm.md",
+    "AD-Enum.md",
+    "22 ssh.md",
+    "161,162 snmp.md",
+    "5432,5433 postgres.md",
+    "25,465,587 smtp.md",
+    "139,445 smb.md",
+    "2049 nfs.md",
+    "3306 mysql.md",
+    "135,539 rpc.md",
+    "1433 mssql.md",
+    "80,443 http.md",
+    "21 ftp.md",
+    "53 dns.md",
+    "WorkFlow.md",
+    "Windows-PrivEsc.md",
+    "Linux-PrivEsc.md",
+    "AD-LateralMove.md",
+    "Kali-Utils.md",
+    "Default Passwords.md",
+    "Hydra.md",
+    "Ligolo.md",
+    "Transfers.md",
+    "SSH Port Forward.md",
+    "Shells.md"
+  ]
 }

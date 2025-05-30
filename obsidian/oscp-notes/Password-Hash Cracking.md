@@ -29,8 +29,10 @@ c $1 $3 $7 $!
 c $1 $3 $7 $@
 c $1 $3 $7 $#
 
+
 # 2 Convert to correct format
 ssh2john id_rsa > ssh.hash
+
 
 # 3 Crack
 # hashcat
@@ -46,8 +48,10 @@ john --wordlist=ssh.passwords --rules=sshRules ssh.hash
 # hashcat
 hashcat -m 1000 hashes.txt /usr/share/wordlists/rockyou.txt -r /usr/share/hashcat/rules/best64.rule --force
 
+
 # john
 john hashes.txt --format=nt --wordlist=/usr/share/wordlists/rockyou.txt --rules /usr/share/john/rules/best64.rule
+
 
 #  https://medium.com/secstudent/using-john-the-ripper-with-lm-hashes-f757bd4fb094
 ```
@@ -60,12 +64,14 @@ hashcat -m 5600 paul.hash /usr/share/wordlists/rockyou.txt --force
 # john
 john paul.hash --format=netntlmv2 --wordlist=/usr/share/wordlists/rockyou.txt --rules /usr/share/john/rules/best64.rule
 
+
 # https://exploit-notes.hdks.org/exploit/cryptography/algorithm/ntlm-ntlmv2/
 ```
 # *Asreproast Hash*
 ```shell
 # hashcat
 sudo hashcat -m 18200 hashes.asreproast /usr/share/wordlists/rockyou.txt -r /usr/share/hashcat/rules/best64.rule --force
+
 
 # john
 john hashes.asreproast --wordlist=/usr/share/wordlists/rockyou.txt --rules /usr/share/john/rules/best64.rule
@@ -74,6 +80,7 @@ john hashes.asreproast --wordlist=/usr/share/wordlists/rockyou.txt --rules /usr/
 ```shell
 # hashcat 
 sudo hashcat -m 13100 hashes.kerberoast /usr/share/wordlists/rockyou.txt -r /usr/share/hashcat/rules/best64.rule --force
+
 
 # john
 john hashes.kerberoast --wordlist=/usr/share/wordlists/rockyou.txt --rules /usr/share/john/rules/best64.rule

