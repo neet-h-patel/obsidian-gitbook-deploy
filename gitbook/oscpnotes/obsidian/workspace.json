@@ -4,39 +4,20 @@
     "type": "split",
     "children": [
       {
-        "id": "19ac9182fc2b3517",
+        "id": "fab70f8a97c594c9",
         "type": "tabs",
         "children": [
           {
-            "id": "8b42a834e6a92103",
+            "id": "29fa5b8fec641280",
             "type": "leaf",
             "state": {
-              "type": "markdown",
-              "state": {
-                "file": "AD-Enum.md",
-                "mode": "source",
-                "source": false
-              },
+              "type": "empty",
+              "state": {},
               "icon": "lucide-file",
-              "title": "AD-Enum"
-            }
-          },
-          {
-            "id": "918f19d663bae51b",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "AD-LateralMove.md",
-                "mode": "source",
-                "source": false
-              },
-              "icon": "lucide-file",
-              "title": "AD-LateralMove"
+              "title": "New tab"
             }
           }
-        ],
-        "currentTab": 1
+        ]
       }
     ],
     "direction": "vertical"
@@ -156,13 +137,12 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "AD-LateralMove.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline of AD-LateralMove"
+              "title": "Outline"
             }
           }
         ],
@@ -182,7 +162,7 @@
       "command-palette:Open command palette": false
     }
   },
-  "active": "918f19d663bae51b",
+  "active": "29fa5b8fec641280",
   "lastOpenFiles": [
     "AD-Enum.md",
     "AD-LateralMove.md",
