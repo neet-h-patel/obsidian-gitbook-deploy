@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "AD-LateralMove.md",
+                "file": "AD-LatMove.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "AD-LateralMove"
+              "title": "AD-LatMove"
             }
           }
         ]
@@ -141,13 +141,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "AD-LateralMove.md",
+                "file": "AD-LatMove.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline of AD-LateralMove"
+              "title": "Outline of AD-LatMove"
             }
           }
         ],
@@ -169,8 +169,9 @@
   },
   "active": "29fa5b8fec641280",
   "lastOpenFiles": [
-    "AD-Enum.md",
+    "AD-LatMove.md",
     "AD-LateralMove.md",
+    "AD-Enum.md",
     "5985,5986 winrm.md",
     "Password-Hash Cracking.md",
     "nmap.md",
@@ -193,7 +194,6 @@
     "Default Passwords.md",
     "Hydra.md",
     "Ligolo.md",
-    "Transfers.md",
-    "SSH Port Forward.md"
+    "Transfers.md"
   ]
 }
