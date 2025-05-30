@@ -1,6 +1,6 @@
 ### ***Move using Hashes and Tickets (LAr for ALL)***
 
- - ***Try targeting HIGH PRIV users to Move around***
+- ***Try targeting HIGH PRIV users to Move around***
 
 # ***Pass the Hash (DU)***
 ***Works on Domain accounts and the BUILTIN-Administrator account (for Local Admin group) only!***
