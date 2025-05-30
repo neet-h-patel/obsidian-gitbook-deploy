@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "AD-LateralMove.md",
+                "file": "0 Nmap.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "AD-LateralMove"
+              "title": "0 Nmap"
             }
           }
         ]
@@ -141,13 +141,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "AD-LateralMove.md",
+                "file": "0 Nmap.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline of AD-LateralMove"
+              "title": "Outline of 0 Nmap"
             }
           }
         ],
@@ -169,11 +169,12 @@
   },
   "active": "29fa5b8fec641280",
   "lastOpenFiles": [
-    "AD-Enum.md",
+    "389,636,3268,3269 ldap.md",
     "AD-LateralMove.md",
+    "AD-Enum.md",
     "5985,5986 winrm.md",
     "Password-Hash Cracking.md",
-    "nmap.md",
+    "0 Nmap.md",
     "22 ssh.md",
     "161,162 snmp.md",
     "5432,5433 postgres.md",

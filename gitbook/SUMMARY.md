@@ -7,6 +7,7 @@
         * [core-plugins.json](oscpnotes/obsidian/coreplugins.json)
         * [workspace.json](oscpnotes/obsidian/workspace.json)
 
+    * [0 Nmap](oscpnotes/0-nmap.md)
     * [135,539 rpc](oscpnotes/135539-rpc.md)
     * [139,445 smb](oscpnotes/139445-smb.md)
     * [1433 mssql](oscpnotes/1433-mssql.md)
@@ -16,6 +17,7 @@
     * [22 ssh](oscpnotes/22-ssh.md)
     * [25,465,587 smtp](oscpnotes/25465587-smtp.md)
     * [3306 mysql](oscpnotes/3306-mysql.md)
+    * [389,636,3268,3269 ldap](oscpnotes/38963632683269-ldap.md)
     * [53 dns](oscpnotes/53-dns.md)
     * [5432,5433 postgres](oscpnotes/54325433-postgres.md)
     * [5985,5986 winrm](oscpnotes/59855986-winrm.md)
@@ -39,5 +41,3 @@
     * [Windows-PrivEsc](oscpnotes/windowsprivesc.md)
     * [Windows-Utils](oscpnotes/windowsutils.md)
     * [WorkFlow](oscpnotes/workflow.md)
-    * [ldap 389,636,3268,3269](oscpnotes/ldap-38963632683269.md)
-    * [nmap](oscpnotes/nmap.md)
