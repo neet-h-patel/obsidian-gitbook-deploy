@@ -1,4 +1,3 @@
-### ***Move using Hashes and Tickets (LAr for ALL)***
 
 - ***Try targeting HIGH PRIV users to Move around***
 
