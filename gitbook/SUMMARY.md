@@ -21,7 +21,7 @@
     * [5985,5986 winrm](oscpnotes/59855986-winrm.md)
     * [80,443 http](oscpnotes/80443-http.md)
     * [AD-Enum](oscpnotes/adenum.md)
-    * [AD-LatMove](oscpnotes/adlatmove.md)
+    * [AD-LateralMove](oscpnotes/adlateralmove.md)
     * [Client-Side Attacks](oscpnotes/clientside-attacks.md)
     * [Default Passwords](oscpnotes/default-passwords.md)
     * [Hydra](oscpnotes/hydra.md)
